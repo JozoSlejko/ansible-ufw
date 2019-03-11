@@ -1,0 +1,31 @@
+---
+
+- hosts: api
+  become: yes
+  roles:
+    - ufw
+  vars:
+    ufw_rules:
+      - { port: 22, rule: allow, comment: 'Allow SSH' }
+      - { port: 443, rule: allow }
+      - { from_ip: '127.0.0.1/8', comment: 'Allow localhost' }
+      - { from_ip: '127.0.42.0/24', rule: deny }
+    ufw_default_forward_policy: ACCEPT
+    ufw_logging: full
+    ufw_applications:
+     - { name: "OpenSSH" }
+
+- hosts: sql
+  become: yes
+  roles:
+    - ufw
+  vars:
+    ufw_rules:
+      - { port: 22, rule: allow, comment: 'Allow SSH' }
+      - { port: 1433, rule: allow }
+      - { from_ip: '127.0.0.1/8', comment: 'Allow localhost' }
+      - { from_ip: '127.0.42.0/24', rule: deny }
+    ufw_default_forward_policy: ACCEPT
+    ufw_logging: medium
+    ufw_applications:
+     - { name: "OpenSSH" }
